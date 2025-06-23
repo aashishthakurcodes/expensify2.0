@@ -7,7 +7,7 @@ import { sendEmail } from "@/utils/mailer";
  connectDb();
  export async function POST(req:NextRequest){
     try {
-    const reqBody= req.json()
+    const reqBody= await req.json()
     const {username,email,password}=reqBody
     //validation
     console.log(reqBody);
@@ -39,8 +39,10 @@ import { sendEmail } from "@/utils/mailer";
         savedUser
      })
 
-    } catch (error:any) {
-        return NextResponse.json({error:error.message},{status:500})
-        
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+        return NextResponse.json({ error: "An unknown error occurred" }, { status: 500 });
     }
  }
